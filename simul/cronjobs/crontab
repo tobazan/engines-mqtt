@@ -1,0 +1,3 @@
+*/3 * * * * /app/cronjobs/anomalies_e3.sh
+*/5 * * * * /app/cronjobs/anomalies_e1.sh
+*/8 * * * * /app/cronjobs/anomalies_e2.sh
