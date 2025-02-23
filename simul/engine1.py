@@ -37,5 +37,5 @@ while True:
         }
 
         # PUBLISH TELEMTRY EVERY 3 SECONDS
-        client.publish("engine1/telemetry", json.dumps(telemetry, separators=(",", ":")))
+        client.publish(topic, json.dumps(telemetry, separators=(",", ":")))
         time.sleep(3)

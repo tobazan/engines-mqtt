@@ -35,10 +35,10 @@ def inject_anomalies():
         # Worsen values
         telemetry = {
             "event_time": datetime.now().isoformat(),
-            "oil_temp": float(np.random.normal(150, 20)),       # Higher oil temperature
+            "oil_temp": float(np.random.normal(160, 4)),       # Higher oil temperature
             "ambient_temp": float(np.random.normal(30, 5)),
-            "fuel_pressure": float(np.random.normal(30, 5)),    # Lower fuel pressure
-            "rpm": int(np.random.normal(6000, 1000)),           # Higher engine speed
+            "fuel_pressure": float(np.random.normal(28, 2)),    # Lower fuel pressure
+            "rpm": int(np.random.normal(6000, 150)),           # Higher engine speed
             "voltage": float(np.random.normal(25, 2)),          # Lower  voltage
             "vibrations": float(np.random.exponential(20)),     # Higher vibrations
         }

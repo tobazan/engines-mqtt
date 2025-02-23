@@ -1,0 +1,3 @@
+mosquitto/log/
+testing/logs/
+simul/cronjobs/cron.log

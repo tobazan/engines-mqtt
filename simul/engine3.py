@@ -8,7 +8,7 @@ import os
 # MQTT broker details
 broker = "mosquitto"
 port = 1883
-topic = "engine1/telemetry"
+topic = "engine3/telemetry"
 
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc, properties=None):
@@ -47,5 +47,5 @@ while True:
             }
 
         # PUBLISH TELEMTRY EVERY 3 SECONDS
-        client.publish("engine3/telemetry", json.dumps(telemetry, separators=(",", ":")))
+        client.publish(topic, json.dumps(telemetry, separators=(",", ":")))
         time.sleep(3)

@@ -19,7 +19,7 @@ log_files = {
 # CREATE LOG DIR
 os.makedirs("/app/logs", exist_ok=True)
 
-def connect_with_retry(client, broker, port, retries=5, delay=2):
+def connect_with_retry(client, broker, port, retries=3, delay=2):
     for i in range(retries):
         try:
             client.connect(broker, port, 60)
@@ -43,8 +43,6 @@ def on_message(client, userdata, message):
     # APPEND TO LOG FILE
     with open(log_files[topic], "a") as f:
         f.write(json.dumps(log_entry, separators=(",", ":")) + "\n")
-
-    print(f"Logged to {log_files[topic]}: {log_entry}")
 
 # MQTT CLIENT
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)

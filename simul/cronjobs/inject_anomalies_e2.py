@@ -5,6 +5,11 @@ import json
 from datetime import datetime
 import os
 
+# MQTT broker details
+broker = "mosquitto"
+port = 1883
+topic = "engine2/telemetry"
+
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc, properties=None):
     if rc == 0:
