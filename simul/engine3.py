@@ -5,8 +5,22 @@ import json
 from datetime import datetime
 import os 
 
-client = mqtt.Client()
-client.connect("mosquitto", 1883, 60)
+# MQTT broker details
+broker = "mosquitto"
+port = 1883
+topic = "engine1/telemetry"
+
+# Callback when the client connects to the broker
+def on_connect(client, userdata, flags, rc, properties=None):
+    if rc == 0:
+        print("Connected to MQTT Broker!")
+    else:
+        print(f"Failed to connect, return code {rc}")
+
+# Create MQTT client
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client.on_connect = on_connect
+client.connect(broker, port, 60)
 
 while True:
     # IF ANOMALY INJECTION IS INACTIVE

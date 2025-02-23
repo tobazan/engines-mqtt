@@ -19,6 +19,18 @@ log_files = {
 # CREATE LOG DIR
 os.makedirs("/app/logs", exist_ok=True)
 
+def connect_with_retry(client, broker, port, retries=5, delay=2):
+    for i in range(retries):
+        try:
+            client.connect(broker, port, 60)
+            print("Connected to MQTT Broker!")
+            return True
+        except Exception as e:
+            print(f"Connection failed (attempt {i + 1}/{retries}): {e}")
+            time.sleep(delay)
+    print("Failed to connect to MQTT Broker after retries.")
+    return False
+
 # MQTT on_message CALLBACK
 def on_message(client, userdata, message):
     topic = message.topic
@@ -35,9 +47,10 @@ def on_message(client, userdata, message):
     print(f"Logged to {log_files[topic]}: {log_entry}")
 
 # MQTT CLIENT
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.on_message = on_message
-client.connect(broker, port, 60)
+if not connect_with_retry(client, broker, port):
+    exit(1)  # Exit if connection fails after retries
 
 for topic in topics:
     client.subscribe(topic)

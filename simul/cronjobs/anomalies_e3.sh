@@ -1,2 +1,2 @@
 #!/bin/bash
-python /app/cronjobs/inject_anomalies_e3.py 
+python3 /app/cronjobs/inject_anomalies_e3.py
