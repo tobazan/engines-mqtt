@@ -1,8 +1,21 @@
-import paho.mqtt.client as mqtt
 import json
 import time
 from datetime import datetime
+
+import paho.mqtt.client as mqtt
+
+import asyncio
+import uuid
+from azure.iot.device.aio import IoTHubDeviceClient
+from azure.iot.device import Message
+
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# ENV VARS
+IOT_HUB_CONN_STR = os.get("HUB_CONN_STR")
 
 # MQTT BROKER DETAILS
 broker = "mosquitto"
@@ -18,6 +31,18 @@ log_files = {
 
 # CREATE LOG DIR
 os.makedirs("/app/logs", exist_ok=True)
+
+async def az_bridge(payload,processing_time):
+    device_client = IoTHubDeviceClient.create_from_connection_string(IOT_HUB_CONN_STR)
+    await device_client.connect()
+
+    msg = Message("{ \"DateTime\": \"" + str(processing_time) + "\"Payload\": \"" + payload + "\" }")
+    msg.message_id = uuid.uuid4()
+    msg.content_encoding = "utf-8"
+    msg.content_type = "application/json"
+
+    await device_client.send_message(msg)
+    await device_client.shutdown()
 
 def connect_with_retry(client, broker, port, retries=3, delay=2):
     for i in range(retries):
@@ -35,14 +60,20 @@ def connect_with_retry(client, broker, port, retries=3, delay=2):
 def on_message(client, userdata, message):
     topic = message.topic
     payload = message.payload.decode("utf-8")
-    # LOG WITH TS
-    log_entry = {
-        "processing_time": datetime.now().isoformat(),
-        "data": json.loads(payload)
-    }
-    # APPEND TO LOG FILE
+    processing_time = datetime.now().isoformat()
+
+    # LOG WITH TS - APPEND TO LOG FILE
+    log_entry = {"processing_time": processing_time,"data": json.loads(payload)}
+
     with open(log_files[topic], "a") as f:
         f.write(json.dumps(log_entry, separators=(",", ":")) + "\n")
+    
+    # SENT TO CLOUD ONLY TOPIC 1
+    if topic == "engine1/telemetry":
+        try:
+           asyncio.run(az_bridge(payload,processing_time))
+        except: 
+            pass
 
 # MQTT CLIENT
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
