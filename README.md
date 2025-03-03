@@ -3,21 +3,19 @@
 ```
 engines/
 ├── README.md
+├── .gitignore
 ├── docker-compose.yml
-├── mqtt/
+├── mosquitto/
 │   ├── config/
 │   │   ├── mosquitto.conf
-│   └── data/
-├── shared/
-|   ├── anomaly_active_e1.txt
-|   ├── anomaly_active_e2.txt
-|   └── anomaly_active_e3.txt
+│   └── log/
 ├── simul/
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   ├── engine1.py
 │   ├── engine2.py
 │   ├── engine3.py
+│   ├── shared/
 │   └── cronjobs/
 │       ├── inject_anomalies_e1.py
 │       ├── inject_anomalies_e2.py
@@ -26,18 +24,9 @@ engines/
 │       ├── anomalies_e2.sh
 │       ├── anomalies_e3.sh
 │       └── crontab
-└── testing/
+└── az-bridge/
     ├── logs/
     ├── Dockerfile
     ├── requirements.txt
-    └── logger.py
+    └── az-integration.py
 ```
-
-### High Level Steps
-- Create an Azure IoT Hub instance
-- Extract Connection Strings
-- Create an IoT Device identity
-- Create a SAS Policy
-- TLS Certificate
-- Pulling it all together
-- Mosquitto_pub/Mosquitto_sub

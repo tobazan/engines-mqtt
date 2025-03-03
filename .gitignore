@@ -1,3 +1,4 @@
-mosquitto/log/
-testing/logs/
-simul/cronjobs/cron.log
+mosquitto/log/*.log
+az-bridge/logs/*.log
+simul/cronjobs/*.log
+.env

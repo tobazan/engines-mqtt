@@ -31,7 +31,7 @@ def inject_anomalies():
     client.on_connect = on_connect
     client.connect(broker, port, 60)
 
-    for _ in range(5):  # Send anomalies 5 iterations with 3-second sleep
+    for _ in range(30):  # Send anomalies 30 iterations with 3-second sleep
         # Worsen values
         telemetry = {
             "event_time": datetime.now().isoformat(),
