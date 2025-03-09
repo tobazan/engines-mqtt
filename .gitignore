@@ -1,4 +1,5 @@
 mosquitto/log/*.log
-az-bridge/logs/*.log
 simul/cronjobs/*.log
+az-bridge/logs/*.json
+simul/shared/*.txt
 .env

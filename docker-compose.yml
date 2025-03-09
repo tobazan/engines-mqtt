@@ -23,6 +23,8 @@ services:
   az-bridge:
     build: ./az-bridge
     container_name: az-bridge
+    env_file:
+      - .env
     depends_on:
       - mosquitto
     volumes:

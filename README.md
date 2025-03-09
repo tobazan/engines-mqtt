@@ -1,4 +1,10 @@
-# IIoT Telemtry to the Cloud
+# IIoT Telemetry to the Cloud
+
+## Architecture
+
+![BASE ARCHITECTURE](base-arch.png)
+
+## Repo Structure
 
 ```
 engines/

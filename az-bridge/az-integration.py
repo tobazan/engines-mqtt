@@ -10,12 +10,9 @@ from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # ENV VARS
-IOT_HUB_CONN_STR = os.get("HUB_CONN_STR")
+IOT_HUB_CONN_STR = os.getenv("HUB_CONN_STR")
 
 # MQTT BROKER DETAILS
 broker = "mosquitto"
@@ -76,11 +73,11 @@ def on_message(client, userdata, message):
             pass
 
 # MQTT CLIENT
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client = mqtt.Client()
 client.on_message = on_message
+
 if not connect_with_retry(client, broker, port):
     exit(1)  # Exit if connection fails after retries
-
 for topic in topics:
     client.subscribe(topic)
     print(f"Subscribed to {topic}")
