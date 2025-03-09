@@ -1,6 +1,6 @@
 import json
 import time
-from datetime import datetime
+from datetime import datetime, date
 
 import paho.mqtt.client as mqtt
 
@@ -18,22 +18,23 @@ IOT_HUB_CONN_STR = os.getenv("HUB_CONN_STR")
 broker = "mosquitto"
 port = 1883
 topics = ["engine1/telemetry", "engine2/telemetry", "engine3/telemetry"]
+today = date.today().strftime("%Y%m%d")
 
-# LOG PATHS
+# LOG PATHS - FILE PER DAY
 log_files = {
-    "engine1/telemetry": "/app/logs/engine1_log.json",
-    "engine2/telemetry": "/app/logs/engine2_log.json",
-    "engine3/telemetry": "/app/logs/engine3_log.json"
+    "engine1/telemetry": f"/app/logs/engine1_log_{today}.json",
+    "engine2/telemetry": f"/app/logs/engine2_log_{today}.json",
+    "engine3/telemetry": f"/app/logs/engine3_log_{today}.json"
 }
 
 # CREATE LOG DIR
 os.makedirs("/app/logs", exist_ok=True)
 
-async def az_bridge(payload,processing_time):
+async def az_bridge(log_entry):
     device_client = IoTHubDeviceClient.create_from_connection_string(IOT_HUB_CONN_STR)
     await device_client.connect()
 
-    msg = Message("{ \"DateTime\": \"" + str(processing_time) + "\"Payload\": \"" + payload + "\" }")
+    msg = Message(json.dumps(log_entry, separators=(",", ":")))
     msg.message_id = uuid.uuid4()
     msg.content_encoding = "utf-8"
     msg.content_type = "application/json"
@@ -55,20 +56,23 @@ def connect_with_retry(client, broker, port, retries=3, delay=2):
 
 # MQTT on_message CALLBACK
 def on_message(client, userdata, message):
-    topic = message.topic
     payload = message.payload.decode("utf-8")
     processing_time = datetime.now().isoformat()
 
     # LOG WITH TS - APPEND TO LOG FILE
-    log_entry = {"processing_time": processing_time,"data": json.loads(payload)}
+    log_entry = {
+                "processing_time": processing_time,
+                "topic": message.topic,
+                 "data": json.loads(payload)
+                }
 
-    with open(log_files[topic], "a") as f:
+    with open(log_files[message.topic], "a") as f:
         f.write(json.dumps(log_entry, separators=(",", ":")) + "\n")
     
     # SENT TO CLOUD ONLY TOPIC 1
-    if topic == "engine1/telemetry":
+    if message.topic == "engine1/telemetry":
         try:
-           asyncio.run(az_bridge(payload,processing_time))
+           asyncio.run(az_bridge(log_entry))
         except: 
             pass
 
